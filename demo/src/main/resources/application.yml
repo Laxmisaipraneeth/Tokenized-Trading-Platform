@@ -1,0 +1,62 @@
+spring:
+  application:
+    name: tokenized-trading-platform
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/tokenized_trading
+    username: postgres
+    password: postgres
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          batch_size: 50
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 20
+          min-idle: 5
+
+app:
+  jwt:
+    # Must be at least 32 characters (256 bits) — replace in production
+    secret: "replace-this-with-a-secure-256-bit-secret-key-in-prod"
+    expiration-ms: 3600000       # 1 hour
+    refresh-expiration-ms: 604800000  # 7 days
+  cache:
+    wallet-ttl-seconds: 30
+    portfolio-ttl-seconds: 60
+  lock:
+    default-wait-seconds: 3
+    default-lease-seconds: 10
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,prometheus
+
+logging:
+  level:
+    "[com.tokenizedtradingplatform.demo.infrastructure.lock]": DEBUG
+    "[com.tokenizedtradingplatform.demo.infrastructure.cache]": DEBUG
+    "[com.tokenizedtradingplatform.demo.application.event]": DEBUG
